@@ -6,11 +6,11 @@
 // WiFi and MQTT credentials
 const char* ssid = "Magda en Karol";
 const char* password = "klapeczki";
-const char* mqttServer = "192.168.129.25";
-const char* mqttUser = "temperature_kitchen";
+const char* mqttServer = "homeassistant.local";
+const char* mqttUser = "Climate";
 const char* mqttPassword = "klapeczki";
-const char* mqttTopic = "home/kitchen/temperature";
-const char* mqttClientId = "KitchenTemperature";  // each mqtt client needs a different id
+const char* mqttTopic = "home/bedroom/temperature";
+const char* mqttClientId = "BedroomTemperature";  // each mqtt client needs a different id
 
 // Define the pin for the OneWire bus (connected to the DS18B20 sensor)
 #define ONE_WIRE_BUS 4
@@ -49,10 +49,15 @@ void setup() {
 void reconnectWiFi() {
   // Attempt to reconnect to WiFi if the connection is lost
   Serial.println("WiFi connection lost. Reconnecting...");
-  WiFi.begin(ssid, password);
+  WiFi.reconnect();
+  double timeout = millis() + 10000;
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Reconnecting to WiFi...");
+    if (millis() > timeout){
+      Serial.println("Timeout connecting to wifi");
+      return;
+    }
   }
   Serial.println("Reconnected to WiFi");
 }
@@ -66,12 +71,12 @@ void reconnectMQTT() {
     } else {
       Serial.print("failed, rc=");
       Serial.println(client.state());
-      delay(5000);  // Wait before retrying
+      delay(1000);  // Wait before retrying
     }
     
     // If WiFi is disconnected during MQTT reconnection, reconnect WiFi
     if (WiFi.status() != WL_CONNECTED) {
-      reconnectWiFi();
+      break;
     }
   }
 }
