@@ -1,11 +1,11 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define SSID "Magda en Karol"
+#define SSID ""Magda en Karol""
 #define WIFI_PASSWORD "klapeczki"
 
-#define MQTT_SERVER "192.168.129.25"
-#define USER "temperature_kitchen"
+#define MQTT_SERVER "homeassistant.local"
+#define USER "Climate"
 #define USER_PASSWORD "klapeczki"
 
 #define MQTT_TOPIC_KITCHEN_PUMP_STATE "home/kitchen_pump/state"
@@ -81,18 +81,26 @@ void setup() {
 
 void reconnectWiFi() {
   Serial.println("WiFi connection lost. Reconnecting...");
-  WiFi.begin(SSID, WIFI_PASSWORD);
+  WiFi.reconnect();
+  double timeout = millis() + 10000;
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Reconnecting to WiFi...");
+    if (millis() > timeout){
+      Serial.println("Timeout connecting to wifi");
+      return;
+    }
   }
   Serial.println("Reconnected to WiFi");
 }
 
 void reconnectMQTT() {
+  if (WiFi.status() != WL_CONNECTED){
+    return;  //will try to reconnect to wifi 
+  }
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    if (client.connect(USER, USER, USER_PASSWORD)) {
+    if (client.connect("pump_switch", USER, USER_PASSWORD)) {
       Serial.println("connected");
       client.subscribe(MQTT_TOPIC_KITCHEN_PUMP_CONTROL); // Subscribe to control topic
       client.subscribe(MQTT_TOPIC_BEDROOM_PUMP_CONTROL); 
@@ -100,9 +108,6 @@ void reconnectMQTT() {
       Serial.print("failed, rc=");
       Serial.println(client.state());
       delay(5000);
-    }
-    if (WiFi.status() != WL_CONNECTED){
-      reconnectWiFi();
     }
   }
 }
