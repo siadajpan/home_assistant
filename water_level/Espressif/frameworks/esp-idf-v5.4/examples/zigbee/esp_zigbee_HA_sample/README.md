@@ -1,7 +1,3 @@
-# Zigbee HA Example
-
-Those are the HA (Home Automation) Zigbee devices example. More examples will be coming soon.
-
 ## Overview
 The system is design to measure the water level height 0-1m and send the measurement 
 to the Home Assistant through zigbee.
