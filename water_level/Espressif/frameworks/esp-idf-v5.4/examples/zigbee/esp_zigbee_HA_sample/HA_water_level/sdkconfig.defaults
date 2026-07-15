@@ -29,3 +29,7 @@ CONFIG_ZB_ENABLED=y
 CONFIG_ZB_ZED=y
 # end of Zboss
 # end of Component config
+
+# Power Management (needed for Light Sleep)
+CONFIG_PM_ENABLE=y
+CONFIG_FREERTOS_USE_TICKLESS_IDLE=y

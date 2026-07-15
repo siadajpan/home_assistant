@@ -1,0 +1,19 @@
+# ESP-IDF specific
+**/build/
+**/sdkconfig
+**/sdkconfig.old
+**/managed_components/
+
+# Arduino / PlatformIO
+**/.pio/
+**/.pioenvs/
+**/.piolibdeps/
+*.elf
+*.bin
+*.hex
+
+# IDE and System Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
